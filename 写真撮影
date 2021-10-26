@@ -1,9 +1,11 @@
 import RPi.GPIO as GPIO
 import picamera
 import time
+from time import sleep
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(12, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 CAM_DIR  = "/home/pi/photo/"
 
@@ -15,6 +17,12 @@ try:
             filename = time.strftime("%Y%m%d%H%M%S") + ".jpeg"
             save_dir_filename = CAM_DIR + filename
             camera.capture(save_dir_filename)
+        if GPIO.input(12) == 0:
+            filename = time.strftime("%Y%m%d%H%M%S") + ".h264"
+            save_dir_filename = CAM_DIR + filename
+            camera.start_recording(save_dir_filename)
+            sleep(5)
+            camera.stop_recording()
 
 except KeyboardInterrupt:
     GPIO.cleanup()
